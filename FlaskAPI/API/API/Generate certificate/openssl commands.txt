@@ -1,0 +1,16 @@
+
+CLI commands:
+
+Create private key using openssl.conf file and create corresponding certificate request file:
+"c:\Program Files\OpenSSL-Win64\bin\openssl.exe" req -new -config openssl.conf -out netapi_v7.csr
+
+Check that CSR are correct (not mandatory step):
+"c:\Program Files\OpenSSL-Win64\bin\openssl.exe" req -in netapi_v7.csr -noout -text
+
+
+Send CSR to Windows CA for signing:
+certreq -submit -attrib "CertificateTemplate:M-WebServer2" netapi_v7.csr
+
+Convert to PFX if required:
+openssl pkcs12 -export -out netapi_v1.pfx -inkey netapi_v1.key -in netapi_v1.crt -certfile Chain.cer
+

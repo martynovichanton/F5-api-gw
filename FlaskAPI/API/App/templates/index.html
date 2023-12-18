@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>App</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+
+
+
+{% for vip_stat in dataset["vip_stats"] %}
+    <div class="vippool">
+        <div class="vip">
+            Vip
+            {{ vip_stat["vip"]["vip_name"] }}
+            {% if vip_stat["vip"]["client_connections"] > 0 %}
+                <strong class="active">{{ vip_stat["vip"]["client_connections"] }}</strong>
+            {% else %}
+                {{ vip_stat["vip"]["client_connections"] }}
+            {% endif %}
+            
+        </div>
+        {% if "pool_members" in vip_stat %}
+            <div class="pool">
+                Pool
+                {{ vip_stat["pool_members"][0]["pool_name"] }}
+                {% for member in vip_stat["pool_members"] %}
+                    <div class="member">
+                        {{ member["name"].split("/")[2] }}
+                        {{ member["address"] }}
+                        {% if member["connections"] > 0 %}
+                            <strong class="active">{{ member["connections"] }}</strong>
+                        {% else %}
+                            {{ member["connections"] }}
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+{% endfor %}
+</body>
+</html>

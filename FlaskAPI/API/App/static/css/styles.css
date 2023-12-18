@@ -1,0 +1,30 @@
+.vippool {
+  text-align: center;
+  display: inline;
+  margin: 10px 10px;
+  padding: 5px 5px;
+  float: left;
+  border-style: solid;
+}
+
+.vip {
+  display: inline;
+  margin: 5px 5px;
+  padding: 5px 5px;
+}
+
+.pool {
+  margin: 5px 5px;
+  padding: 5px 5px;
+  border-style: solid;
+}
+
+.member {
+  margin: 5px 5px;
+  padding: 5px 5px;
+  border-style: solid;
+}
+
+.active {
+  color: green;
+}

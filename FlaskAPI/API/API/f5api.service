@@ -1,0 +1,12 @@
+[Unit]
+Description=uWSGI service for F5 API
+After=network.target
+
+[Service]
+User=antonm
+Group=nginx
+WorkingDirectory=/srv/F5API
+ExecStart=/usr/local/bin/uwsgi --ini /srv/F5API/wsgi.ini
+
+[Install]
+WantedBy=multi-user.target
