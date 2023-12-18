@@ -1,0 +1,75 @@
+
+limit_req_zone $binary_remote_addr zone=limit-normal:10m rate=1r/s;
+limit_req_zone $binary_remote_addr zone=limit-low:10m rate=1r/m;
+
+server {
+    listen 443 ssl;
+    server_name         localhost;
+    ssl_certificate     Certs/server.crt;
+    ssl_certificate_key Certs/server.key;
+    ssl_protocols       TLSv1.2;
+
+
+    location / {
+        default_type application/json;
+        return 200 '{"F5 API":"/f5api/"}';
+    }
+
+    location /f5api/ {
+        include uwsgi_params;
+        uwsgi_pass unix:/Users/anton/Desktop/FlaskAPI/API/API/api.sock;
+        limit_req zone=limit-normal burst=20 nodelay;
+        #uwsgi_pass 127.0.0.1:6001;
+        uwsgi_read_timeout 300;
+        #proxy_pass http://localhost:6001;
+        #proxy_read_timeout 300;
+    }
+
+    location /f5api/poolmembersstatsall {
+        limit_req zone=limit-low;
+        include uwsgi_params;
+        uwsgi_pass unix:/Users/anton/Desktop/FlaskAPI/API/API/api.sock;
+        uwsgi_read_timeout 300;
+    }
+
+    location /f5api/vipstatsall {
+        limit_req zone=limit-low;
+        include uwsgi_params;
+        uwsgi_pass unix:/Users/anton/Desktop/FlaskAPI/API/API/api.sock;
+        uwsgi_read_timeout 300;
+    }
+
+    location /f5api/vippoolstatsall {
+        limit_req zone=limit-low;
+        include uwsgi_params;
+        uwsgi_pass unix:/Users/anton/Desktop/FlaskAPI/API/API/api.sock;
+        uwsgi_read_timeout 300;
+    }
+}
+
+
+
+
+
+cd sites-enabled
+ln -s /usr/local/etc/nginx/sites-available/api.conf /usr/local/etc/nginx/sites-enabled
+
+inside /usr/local/etc/nginx/nginx.conf in http block:
+include /usr/local/etc/nginx/sites-enabled/*.conf;
+
+nginx -t
+sudo service nginx restart
+
+
+
+Need to add the user that runs wsgi to group nginx.
+Set permissions to the folders where the socket is created to:
+chmod 771 /Users/anton/Desktop/FlaskAPI/API
+chmod 770 /Users/anton/Desktop/FlaskAPI/API/API
+sudo chown antonm:nginx /Users/anton/Desktop/FlaskAPI/API/API
+
+prod example:
+chmod 771 /srv
+chmod 770 /srv/F5API
+sudo chown antonm:nginx /srv/F5API
+the cocket is inside /srv/F5API
